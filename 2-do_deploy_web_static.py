@@ -4,7 +4,6 @@
 using the function do_deploy
 """
 from fabric.api import *
-from datetime import datetime
 from os import path
 
 
@@ -17,44 +16,45 @@ def do_deploy(archive_path):
     """Distributes an archive to the web servers"""
 
     try:
-        if not (path.exists(archive_path)):
+        if not path.exists(archive_path):
             return False
 
         # Upload the archive to the /tmp/ directory of the web server
         put(archive_path, '/tmp/')
 
-        # create folder
-        timestamp = archive_path[-18:-4]
-        run('sudo mkdir -p /data/web_static/releases/\
-                web_static_{}/'.format(timestamp))
+        # Extract timestamp from archive path
+        timestamp = path.splitext(path.basename(archive_path))[0][-14:]
 
-        # uncompress archive and delete .tgz
-        run('sudo tar -xzf /tmp/web_static_{}.tgz -C /data/\
-                web_static/releases/web_static_{}/'
+        # Create directory for the release
+        run('mkdir -p /data/web_static/releases/web_static_{}/'
+            .format(timestamp))
+
+        # Uncompress archive and delete .tgz
+        run('tar -xzf /tmp/{}.tgz -C /data/web_static/releases/web_static_{}/'
             .format(timestamp, timestamp))
 
         # Delete the archive from the web server
-        run('sudo rm /tmp/web_static_{}.tgz'.format(timestamp))
+        run('rm /tmp/{}.tgz'.format(timestamp))
 
-        run('sudo mv /data/web_static/releases/web_static_{}/web_static/* \
-                /data/web_static/releases/web_static_{}/'
+        # Move contents from /web_static/ to timestamped folder
+        run('mv /data/web_static/releases/web_static_{}/web_static/* '
+            '/data/web_static/releases/web_static_{}/'
             .format(timestamp, timestamp))
 
-        # remove extra web_static folder
-        run('sudo rm -rf /data/web_static/releases/\
-                web_static_{}/web_static'
+        # Remove extra web_static folder
+        run('rm -rf /data/web_static/releases/web_static_{}/web_static'
             .format(timestamp))
 
-        # Delete the symbolic link /data/web_static/current fromweb server
-        run('sudo rm -rf /data/web_static/current')
+        # Delete the symbolic link /data/web_static/current from the web server
+        run('rm -rf /data/web_static/current')
 
-        # Create a new symbolic link /data/web_static/current linked
-        run('sudo ln -s /data/web_static/releases/\
-                web_static_{}/ /data/web_static/current'
+        # Create a new symbolic link /data/web_static/current
+        run('ln -s /data/web_static/releases/web_static_{}/ /data/\
+                web_static/current'
             .format(timestamp))
 
     except Exception as e:
+        print("Error:", e)
         return False
 
-    # return True on success
     return True
