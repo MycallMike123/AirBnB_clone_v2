@@ -26,7 +26,8 @@ def do_deploy(archive_path):
         timestamp = path.splitext(path.basename(archive_path))[0][-14:]
 
         # Create directory for the release
-        run('mkdir -p /data/web_static/releases/web_static_{}/'.format(timestamp))
+        run('mkdir -p /data/web_static/releases/web_static_{}/'
+            .format(timestamp))
 
         # Uncompress archive and delete .tgz
         run('tar -xzf /tmp/{}.tgz -C /data/web_static/releases/web_static_{}/'
