@@ -57,7 +57,7 @@ def number(n):
 @app.route('/number_template/<int:n>', strict_slashes=False)
 def number_template(n):
     """Display a HTML page with 'Number: n' in H1 tag"""
-    return render_template('5-number.html', number=n)
+    return render_template('5-number_template.html', n=n)
 
 
 if __name__ == '__main__':
