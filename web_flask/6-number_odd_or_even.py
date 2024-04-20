@@ -27,45 +27,39 @@ app = Flask(__name__)
 
 @app.route('/', strict_slashes=False)
 def hello_hbnb():
-    """Function called through the / route."""
+    """Display "Hello HBNB!" on the index page"""
     return 'Hello HBNB!'
 
 
 @app.route('/hbnb', strict_slashes=False)
 def hbnb():
-    """Function called through the /hbnb route."""
+    """Display "HBNB" on the /hbnb page"""
     return 'HBNB'
 
 
 @app.route('/c/<text>', strict_slashes=False)
 def c_route(text):
-    """Function called through the /c/<text> route."""
-    return 'C %s' % text.replace('_', ' ')
+    """Display “C ”, followed by the value of the text variable"""
+    return 'C ' + text.replace('_', ' ')
 
 
-@app.route('/python/', defaults={'text': 'is cool'}, strict_slashes=False)
+@app.route('/python', defaults={'text': 'is cool'}, strict_slashes=False)
 @app.route('/python/<text>', strict_slashes=False)
 def python_route(text):
-    """Function called through the /python/<text> route."""
+    """Display “Python ”, followed by the value of the text variable"""
     return 'Python {}'.format(text.replace('_', ' '))
 
 
 @app.route('/number/<int:n>', strict_slashes=False)
 def number_route(n):
-    """Function that displays "n is a number" if n is indeed an integer."""
+    """Display “n is a number” only if n is an integer"""
     return '{:d} is a number'.format(n)
 
 
 @app.route('/number_template/<int:n>', strict_slashes=False)
 def number_template(n):
-    """Function to display an HTML page only if n is an integer"""
+    """Display a HTML page with 'Number: n' in H1 tag"""
     return render_template('5-number_template.html', n=n)
-
-
-@app.route('/number_odd_or_even/<int:n>', strict_slashes=False)
-def number_odd_or_even(n):
-    return render_template('6-number_odd_or_even.html', n=n, odd_even=(
-        'odd' if n % 2 != 0 else 'even'))
 
 
 if __name__ == '__main__':
